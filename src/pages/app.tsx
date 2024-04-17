@@ -32,7 +32,7 @@ export function App() {
   React.useEffect(() => {
     const channel = new BroadcastChannel('id-results')
     channel.addEventListener('message', (event) => {
-      console.log(event.data)
+      console.log('Result', event.data)
     })
     const metrics = new BroadcastChannel('metrics')
     metrics.addEventListener('message', (event) => {

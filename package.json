@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "sw": "webpack --config src/worker/webpack.config.js",
+    "sw": "rm public/service-worker.js && swc ./src/service-worker -d ./public && webpack --config src/worker/webpack.config.js",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
@@ -22,6 +22,8 @@
     "tsconfig-paths-webpack-plugin": "^4.1.0"
   },
   "devDependencies": {
+    "@swc/cli": "^0.3.12",
+    "@swc/core": "^1.4.15",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
     "@typescript-eslint/eslint-plugin": "^7.2.0",

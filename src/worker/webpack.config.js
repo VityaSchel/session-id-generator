@@ -8,7 +8,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url)) + '/'
 export default {
   entry: './src/worker/index.ts',
   output: {
-    filename: 'service-worker.js',
+    filename: 'worker.js',
     path: resolve(__dirname, '../../public'),
   },
   resolve: {
