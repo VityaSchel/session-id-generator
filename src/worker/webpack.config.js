@@ -9,11 +9,12 @@ export default {
   entry: './src/worker/index.ts',
   output: {
     filename: 'service-worker.js',
-    path: resolve(__dirname, 'public'),
+    path: resolve(__dirname, '../../public'),
   },
   resolve: {
     extensions: ['.ts', '.js', '.json', '.wasm'],
-    plugins: [new TsconfigPathsPlugin({ configFile: __dirname + 'tsconfig.json'})]
+    plugins: [new TsconfigPathsPlugin({ configFile: __dirname + 'tsconfig.json'})],
+    fallback: { 'crypto': false }
   },
   module: {
     rules: [

@@ -1,6 +1,8 @@
 import React from 'react'
 import '@/shared/styles/app.css'
 import { MessageType } from '@/shared/sw-helpers'
+import { generateKeypair, generateMnemonic } from '@/shared/generator/manager/account-manager'
+import { hex } from '@/shared/generator/utils/hex'
 
 export function App() {
   const generating = React.useRef(false)
@@ -39,12 +41,14 @@ export function App() {
   }, [])
 
   const handleSwitch = () => {
-    generating.current = !generating.current
-    if(generating.current) {
-      navigator.serviceWorker.controller?.postMessage({ type: MessageType.StopGenerating })
-    } else {
-      navigator.serviceWorker.controller?.postMessage({ type: MessageType.StartGenerating, filter: '44' })
-    }
+    navigator.serviceWorker.ready.then(reg => {
+      if(generating.current) {
+        reg.active?.postMessage({ type: MessageType.StopGenerating })
+      } else {
+        reg.active?.postMessage({ type: MessageType.StartGenerating, filter: '44' })
+      }
+      generating.current = !generating.current
+    })
   }
 
   if (serviceWorker === false) {
