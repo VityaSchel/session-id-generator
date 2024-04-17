@@ -1,7 +1,5 @@
 const byteToHex: string[] = []
 
-console.log(byteToHex)
-
 for (let n = 0; n <= 0xff; ++n) {
   const hexOctet = n.toString(16).padStart(2, '0')
   byteToHex.push(hexOctet)

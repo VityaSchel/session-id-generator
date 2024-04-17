@@ -3,14 +3,14 @@ import { ArrayBufferToHex } from '@/shared/generator/utils/hex'
 
 self.addEventListener('message', async (event: MessageEvent) => {
   const filter = event.data
-  if(typeof filter === 'object' && filter instanceof Uint8Array && filter.length > 1) {
+  if(typeof filter === 'string' && filter.length > 2) {
     generate(filter)
   }
 })
 
-async function generate(filterView: Uint8Array) {
-  const doesMatch = (key: Uint8Array) => {
-    const offset = 1
+async function generate(filterView: string) {
+  const doesMatch = (key: string) => {
+    const offset = 2
     for (let i = offset; i < filterView.length; i++) {
       if (key[i] !== filterView[i]) {
         return false
@@ -25,8 +25,9 @@ async function generate(filterView: Uint8Array) {
       const mnemonic = await generateMnemonic()
       const keypair = await generateKeypair(mnemonic, 'english')
       
-      if (doesMatch(new Uint8Array(keypair.pubKey))) {
-        postMessage({ id: ArrayBufferToHex(keypair.pubKey), mnemonic })
+      const sessionID = ArrayBufferToHex(keypair.pubKey)
+      if (doesMatch(sessionID)) {
+        postMessage({ id: sessionID, mnemonic })
         await new Promise(resolve => setTimeout(resolve, 0))
       }
     }
