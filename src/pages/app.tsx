@@ -1,64 +1,41 @@
 import React from 'react'
 import '@/shared/styles/app.css'
-import { MessageType } from '@/shared/sw-helpers'
-import { generateKeypair, generateMnemonic } from '@/shared/generator/manager/account-manager'
-import { hex } from '@/shared/generator/utils/hex'
+import { hexToUint8Array } from '@/shared/generator/utils/hex'
 
 export function App() {
   const generating = React.useRef(false)
-  const [serviceWorker, setServiceWorker] = React.useState<true | false | 'error'>(false)
-  const registeringServiceWorker = React.useRef(false)
-
-  React.useEffect(() => {
-    if (registeringServiceWorker.current) return
-    registeringServiceWorker.current = true
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register(new URL('/service-worker.js', import.meta.url), { type: 'module' })
-          .then(reg => {
-            console.log('Service Worker registered', reg)
-            setServiceWorker(true)
-          })
-          .catch(err => {
-            console.error('Service Worker registration failed', err)
-            setServiceWorker('error')
-          })
-      })
-    } else {
-      setServiceWorker('error')
-    }
-  }, [])
-
-  React.useEffect(() => {
-    const channel = new BroadcastChannel('id-results')
-    channel.addEventListener('message', (event) => {
-      console.log('Result', event.data)
-    })
-    const metrics = new BroadcastChannel('metrics')
-    metrics.addEventListener('message', (event) => {
-      console.log(event.data + ' IDs per second')
-    })
-  }, [])
+  const [worker, setWorker] = React.useState<Worker | null>(null)
+  const [filter, setFilter] = React.useState('')
 
   const handleSwitch = () => {
-    navigator.serviceWorker.ready.then(reg => {
-      if(generating.current) {
-        reg.active?.postMessage({ type: MessageType.StopGenerating })
-      } else {
-        const filterEncoded = new TextEncoder().encode('4')
-        reg.active?.postMessage({ type: MessageType.StartGenerating, filter: filterEncoded })
-      }
-      generating.current = !generating.current
-    })
-  }
-
-  if (serviceWorker === false) {
-    return (
-      <span>Loading...</span>
-    )
+    if(generating.current) {
+      console.log('Terminated', worker)
+      worker?.terminate()
+      setWorker(null)
+    } else {
+      const worker = new Worker('/worker.js')
+      worker.addEventListener('message', (event) => {
+        if (event.data && typeof event.data === 'object'
+          && 'id' in event.data && 'mnemonic' in event.data
+          && typeof event.data.id === 'string' && typeof event.data.mnemonic === 'string'
+        ) {
+          console.log('Result', event.data)
+        }
+      })
+      worker.addEventListener('error', (event) => {
+        console.error(event.message)
+      })
+      worker.postMessage(hexToUint8Array('05' + filter))
+      setWorker(worker)
+    }
+    generating.current = !generating.current
   }
 
   return (
-    <button onClick={handleSwitch}>Start/stop</button>
+    <div>
+      05
+      <input value={filter} onChange={e => setFilter(e.target.value)}></input>
+      <button onClick={handleSwitch}>Start/stop</button>
+    </div>
   )
 }
