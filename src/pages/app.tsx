@@ -1,46 +1,59 @@
 import React from 'react'
 import '@/shared/styles/app.css'
-import { generateKeypair, generateMnemonic } from '@/shared/lib/manager/account-manager'
-import { hex } from '@/shared/utils/hex'
+import { MessageType } from '@/shared/sw-helpers'
 
 export function App() {
-  // const generating = React.useRef(false)
+  const generating = React.useRef(false)
+  const [serviceWorker, setServiceWorker] = React.useState<true | false | 'error'>(false)
+  const registeringServiceWorker = React.useRef(false)
 
   React.useEffect(() => {
+    if (registeringServiceWorker.current) return
+    registeringServiceWorker.current = true
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register(new URL('/service-worker.js', import.meta.url), { type: 'module' })
-          .then(reg => console.log('Service Worker registered', reg))
-          .catch(err => console.error('Service Worker registration failed', err))
+          .then(reg => {
+            console.log('Service Worker registered', reg)
+            setServiceWorker(true)
+          })
+          .catch(err => {
+            console.error('Service Worker registration failed', err)
+            setServiceWorker('error')
+          })
       })
+    } else {
+      setServiceWorker('error')
     }
   }, [])
 
-  const handleGenerate = async () => {
-    const start = performance.now()
-    const map = new Map()
-    for(let i = 0; i < 3000; i++) {
-    // while(generating.current) {
-      const mnemonic = await generateMnemonic()
-      const keypair = await generateKeypair(mnemonic, 'english')
-      // console.log(mnemonic, hex(keypair.pubKey))
-      map.set(hex(keypair.pubKey), mnemonic)
+  React.useEffect(() => {
+    const channel = new BroadcastChannel('id-results')
+    channel.addEventListener('message', (event) => {
+      console.log(event.data)
+    })
+    const metrics = new BroadcastChannel('metrics')
+    metrics.addEventListener('message', (event) => {
+      console.log(event.data + ' IDs per second')
+    })
+  }, [])
+
+  const handleSwitch = () => {
+    generating.current = !generating.current
+    if(generating.current) {
+      navigator.serviceWorker.controller?.postMessage({ type: MessageType.StopGenerating })
+    } else {
+      navigator.serviceWorker.controller?.postMessage({ type: MessageType.StartGenerating, filter: '44' })
     }
-    const end = performance.now()
-    console.log(end - start + 'ms')
-    console.log(map.size)
   }
 
-  // const handleSwitch = () => {
-  //   if(generating.current) {
-  //     generating.current = false
-  //   } else {
-  //     generating.current = true
-  //     handleGenerate()
-  //   }
-  // }
+  if (serviceWorker === false) {
+    return (
+      <span>Loading...</span>
+    )
+  }
 
   return (
-    <button onClick={handleGenerate}>test</button>
+    <button onClick={handleSwitch}>Start/stop</button>
   )
 }

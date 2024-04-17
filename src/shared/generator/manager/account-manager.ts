@@ -1,9 +1,9 @@
 // CREDIT: Oxen team, Session Desktop client
 
-import { fromHex, toHex } from '@/shared/utils/string'
+import { fromHex, toHex } from '@/shared/generator/utils/string'
 import { mnDecode, mnEncode } from './mnemonic-manager'
 import { getSodiumRenderer } from '../sodium'
-import { SessionKeyPair } from '@/shared/lib/keypairs'
+import { SessionKeyPair } from '@/shared/generator/keypairs'
 
 /**
  * Might throw

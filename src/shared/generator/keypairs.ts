@@ -1,7 +1,7 @@
 // CREDIT: Oxen team, Session Desktop client
 
 import { KeyPair } from 'libsodium-wrappers-sumo'
-import { fromHexToArray, toHex } from '@/shared/utils/string'
+import { fromHexToArray, toHex } from '@/shared/generator/utils/string'
 
 export type HexKeyPair = {
   publicHex: string;
