@@ -1,5 +1,3 @@
-import { MessageType } from '@/shared/sw-helpers'
-
 const resultsChannel = new BroadcastChannel('id-results')
 const metricsChannel = new BroadcastChannel('metrics')
 
@@ -8,12 +6,13 @@ let generating = false,
 
 self.addEventListener('message', async (event: MessageEvent) => {
   if (typeof event.data === 'object' && 'type' in event.data) {
-    if(event.data.type === MessageType.StartGenerating 
+    if(event.data.type === 0 
       && 'filter' in event.data && typeof event.data.filter === 'object'
       && event.data.filter instanceof Uint8Array
     ) {
       if (generating) return
       generating = true
+      console.log('spawning worker')
       worker = new Worker('/worker.js')
       worker.addEventListener('message', (event) => {
         if (event.data && typeof event.data === 'object'
@@ -23,8 +22,9 @@ self.addEventListener('message', async (event: MessageEvent) => {
           resultsChannel.postMessage(event.data)
         }
       })
+      console.log('letsgo', event.data.filter)
       worker.postMessage(event.data.filter)
-    } else if(event.data.type === MessageType.StopGenerating) {
+    } else if(event.data.type === 1) {
       generating = false
       worker?.terminate()
     }

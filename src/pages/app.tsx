@@ -45,7 +45,8 @@ export function App() {
       if(generating.current) {
         reg.active?.postMessage({ type: MessageType.StopGenerating })
       } else {
-        reg.active?.postMessage({ type: MessageType.StartGenerating, filter: '44' })
+        const filterEncoded = new TextEncoder().encode('4')
+        reg.active?.postMessage({ type: MessageType.StartGenerating, filter: filterEncoded })
       }
       generating.current = !generating.current
     })

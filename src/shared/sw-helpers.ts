@@ -1,4 +1,4 @@
-export enum MessageType {
+export const enum MessageType {
   StartGenerating,
   StopGenerating
 }

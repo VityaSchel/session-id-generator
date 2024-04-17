@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "sw": "rm public/service-worker.js && swc ./src/service-worker -d ./public && webpack --config src/worker/webpack.config.js",
+    "sw": "rm public/service-worker.js ; swc ./src/service-worker -o ./public/service-worker.js",
+    "worker": "webpack --config src/worker/webpack.config.js",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
