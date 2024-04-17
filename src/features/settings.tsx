@@ -63,23 +63,24 @@ export function Settings({ threads, setThreads, onMetricsUpdate, onReset, onResu
   return (
     <>
       <div className='flex mt-6 gap-2'>
-        <div className='flex items-center w-full font-mono'>
+        <div className='flex items-center min-w-0 flex-1 font-mono'>
           <input
             value={'05' + filter}
             onChange={e => setFilter(e.target.value.substring(2).replaceAll(/[^0-9a-fA-F]/g, '').toLowerCase())}
             disabled={generating}
-            className='font-mono text-xl rounded-md border-solid border-[1px] px-4 py-2 flex-1'
+            className='font-mono text-xl rounded-md border-solid border-[1px] px-4 py-2 flex-1 w-full overflow-hidden'
           ></input>
           <span
             className='absolute ml-[42px] font-mono text-xl text-neutral-500 pointer-events-none select-none'
             style={{ display: filter.length === 0 ? 'block' : 'none' }}
           >
-            67890abcdef...
+            <span className='hidden 290:block 360:hidden'>67890...</span>
+            <span className='hidden 360:block'>67890abcdef...</span>
           </span>
         </div>
         <button onClick={handleSwitch} className='rounded-md font-[inherit] border-solid px-4'>Start/stop</button>
       </div>
-      <div className='flex justify-between'>
+      <div className='flex justify-between flex-col 320:flex-row'>
         <div className='flex gap-[3px]'>
           <span className='tabular-nums w-20'>{threads} thread{threads > 1 && 's'}</span>
           <input

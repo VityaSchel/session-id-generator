@@ -13,8 +13,8 @@ export function App() {
 
   return (
     <div className='flex w-full items-center justify-center min-h-[100svh] px-4 py-12'>
-      <div className='flex flex-col 910:flex-row gap-10'>
-        <div className='flex flex-col gap-4 max-w-[430px] shrink-0'>
+      <div className='flex flex-col 910:flex-row gap-10 max-w-full'>
+        <div className='flex flex-col gap-4 w-[430px] max-w-full'>
           <Info />
           <Settings 
             generating={generating}
@@ -26,7 +26,7 @@ export function App() {
             onReset={() => setMetrics([])}
           />
         </div>
-        <div className='flex flex-col gap-2 w-96 shrink-0'>
+        <div className='flex flex-col gap-2 w-96 max-w-full'>
           <Statistics 
             generating={generating}
             threads={threads}

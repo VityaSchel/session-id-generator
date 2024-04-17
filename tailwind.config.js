@@ -6,7 +6,10 @@ export default {
   theme: {
     extend: {
       screens: {
-        '910': '910px'
+        '910': '910px',
+        '320': '320px',
+        '360': '360px',
+        '290': '290px',
       }
     },
   },
