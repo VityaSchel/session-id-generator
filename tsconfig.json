@@ -25,6 +25,6 @@
       "@/*": ["src/*"]
     }
   },
-  "include": ["src", "src/worker", "src/shared/generator", "src/shared/sw-helpers.ts"],
+  "include": ["src", "src/worker", "src/worker/generator", "src/shared/sw-helpers.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
