@@ -4,18 +4,26 @@ Simple, fast and flexible session ID vanity generator tool.
 
 ![image](https://github.com/VityaSchel/session-id-generator/assets/59040542/3dece90b-6371-4591-8afb-43b93f34703d)
 
-[Visit website](https://session-id.pages.dev/)
+There are two versions: web and cli
+
+[Visit website](https://session-id.pages.dev/) OR [Download CLI](https://github.com/VityaSchel/session-id-generator/releases)
 
 This tool bruteforces mnemonics and looks for session IDs matching your specific pattern. The website works 100% clientside and allows you to specify how many workers you want to spawn.
 
 All contributions, especially optimizations to src/worker.ts are welcome.
 
+- [Session ID generator](#session-id-generator)
+  - [How does it work?](#how-does-it-work)
+  - [How long would it take?](#how-long-would-it-take)
+  - [Other Session projects](#other-session-projects)
+  - [Donate](#donate)
+
 ## How does it work?
 
 1. Generate 16 random bytes
-2. Append another 16 empty bytes (zeroes)
+2. Append another 16 empty bytes
 3. Use sodium's crypto_sign_seed_keypair to generate ed25519 key pair from bytes from step 2
-4. Convert ed25519 keypair to x25519 using sodium's crypto_sign_ed25519_pk_to_curve25519
+4. Convert ed25519 keypair to x25519 public key using sodium's crypto_sign_ed25519_pk_to_curve25519
 5. Prepend byte '5' to resulting bytes
 6. Convert to hex and that's a Session ID
 7. If it matches -> use mnemonic encoding function from Session's code on bytes from step (NOT STEP 2) converted to hex
@@ -25,9 +33,9 @@ All contributions, especially optimizations to src/worker.ts are welcome.
 
 I recommend inputting 4 to 5 characters if you have a decent PC. 
 
-You can configure how many workers to spawn (from 1 to `Math.ceil(navigator.hardwareConcurrency / 3)`) and that directly influences how many IDs per second your PC will bruteforce. But most likely your PC will limit threads to about 60%-80% of maximum allowed threads to spawn. Basically, setting 10 workers will get you same results as settings 7 workers.
+You can configure how many workers to spawn (from 1 to `Math.ceil(navigator.hardwareConcurrency / 3)`) and that directly influences how many IDs per second your PC will bruteforce. But most likely your PC will limit threads to about 60%-80% of maximum allowed threads to spawn. Basically, setting 10 workers will likely get you same results as settings 7 workers.
 
-Number of characters you inputted DOES NOT affect bruteforce speed. So type anything, look at "Statistics: XXXX IDs/s" and compare that number to this table:
+Number of characters you inputted DOES NOT practically affect bruteforce speed. So type anything, look at "XXXX IDs/s" and compare that number to this table:
 
 | Characters after 05 | Estimated combinations before first occurance |
 | ------------------- | --------------------------------------------- |
@@ -60,6 +68,8 @@ Which means it will only take you approx 123007503172420652231928035271808694720
 
 Here are some benchmarks:
 
+Website:
+
 | CPU or chip              | Ids/sec using max. threads |
 | ------------------------ | -------------------------- |
 | MacBook Pro M1 (2021)    | 50 000                     |
@@ -68,3 +78,26 @@ Here are some benchmarks:
 | iPhone 15 Pro Max        | 22 000                     |
 | MacBook Air Intel (2020) | 6 600                      |
 |                          |                            |
+
+CLI:
+
+| CPU or chip           | Ids/sec using max. threads |
+| --------------------- | -------------------------- |
+| MacBook Pro M1 (2021) | 70 000                     |
+|                       |                            |
+
+As you can see, **CLI is slightly faster**, but it's not significant when you bruteforce 4-5 characters, since you will spend more time installing CLI than save on this performance increase.
+
+## Other Session projects
+
+I recommend you checking out other cool projects made by me such as:
+- [Session.js bot framework](https://github.com/sessionjs)
+- [Session web client](https://github.com/VityaSchel/session-web)
+- [ONS registry](https://ons.sessionbots.directory/)
+- [Session Bots directory](https://github.com/vityaSchel/session-bots-directory/)
+
+And subscribe on our [Telegram channel](https://t.me/session) for more!
+
+## Donate
+
+[hloth.dev/donate](https://hloth.dev/donate)
