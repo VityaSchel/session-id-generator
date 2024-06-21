@@ -6,7 +6,7 @@ Simple, fast and flexible session ID vanity generator tool.
 
 [Visit website](https://session-id.pages.dev/)
 
-This tool bruteforces mnemonics and looks for session IDs matching your specific pattern. The website works 100% clientside and allows you to specify how many threads you want to use.
+This tool bruteforces mnemonics and looks for session IDs matching your specific pattern. The website works 100% clientside and allows you to specify how many workers you want to spawn.
 
 All contributions, especially optimizations to src/worker.ts are welcome.
 
@@ -25,7 +25,7 @@ All contributions, especially optimizations to src/worker.ts are welcome.
 
 I recommend inputting 4 to 5 characters if you have a decent PC. 
 
-You can configure how many workers to spawn (from 1 to `Math.ceil(navigator.hardwareConcurrency / 3)`) and that directly influences how many IDs per second your PC will bruteforce. But most likely your PC will limit threads to about 60%-80% of maximum allowed threads to spawn. Basically, setting 10 threads will get you same results as settings 7 threads.
+You can configure how many workers to spawn (from 1 to `Math.ceil(navigator.hardwareConcurrency / 3)`) and that directly influences how many IDs per second your PC will bruteforce. But most likely your PC will limit threads to about 60%-80% of maximum allowed threads to spawn. Basically, setting 10 workers will get you same results as settings 7 workers.
 
 Number of characters you inputted DOES NOT affect bruteforce speed. So type anything, look at "Statistics: XXXX IDs/s" and compare that number to this table:
 

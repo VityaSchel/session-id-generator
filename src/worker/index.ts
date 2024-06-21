@@ -1,47 +1,31 @@
-import { getSodiumRenderer } from '@/worker/generator/sodium'
+import sodium from 'libsodium-wrappers-sumo'
 import { hex } from './generator/uint8array_to_hex'
 import { mnEncode } from '@/worker/generator/manager/mnemonic-manager'
 
 self.addEventListener('message', async (event: MessageEvent) => {
   const filter = event.data
-  if(typeof filter === 'string' && filter.length > 2) {
+  if(typeof filter === 'string' && filter.length > 0) {
     generate(filter)
   }
 })
 
-async function generate(filterView: string) {
-  const doesMatch = (key: string) => {
-    const offset = 2
-    for (let i = offset; i < filterView.length; i++) {
-      if (key[i] !== filterView[i]) {
-        return false
-      }
-    }
-    return true
-  }
+async function generate(filter: string) {
+  await sodium.ready
+
+  console.log('generator v1.0.0')
 
   let lastTime = performance.now()
 
-  const sodium = await getSodiumRenderer()
-
   // eslint-disable-next-line no-constant-condition
   while(true) {
-    for(let i = 0; i < 4000; i++) {
-      const seed = sodium.randombytes_buf(16)
-      const seedForKeypair = new Uint8Array(32)
-      seedForKeypair.set(seed)
-
-      const ed25519KeyPair = sodium.crypto_sign_seed_keypair(seedForKeypair)
-      const x25519PublicKey = sodium.crypto_sign_ed25519_pk_to_curve25519(ed25519KeyPair.publicKey)
-      const prependedX25519PublicKey = new Uint8Array(33)
-      prependedX25519PublicKey.set(x25519PublicKey, 1)
-      prependedX25519PublicKey[0] = 5
-
-      const sessionID = hex(prependedX25519PublicKey)
-
-      if (doesMatch(sessionID)) {
+    const batch = batchGenerate()
+    await new Promise(resolve => setTimeout(resolve, 0))
+    for(let i = 0; i < batch.sessionIDs.length; i++) {
+      const sessionID = batch.sessionIDs[i]
+      const seed = batch.seeds[i]
+      if(check(sessionID, filter)) {
         const mnemonic = mnEncode(hex(seed))
-        postMessage({ type: 0, id: sessionID, mnemonic })
+        postMessage({ type: 0, id: '05' + sessionID, mnemonic })
         await new Promise(resolve => setTimeout(resolve, 0))
       }
     }
@@ -49,5 +33,60 @@ async function generate(filterView: string) {
     postMessage({ type: 1, delta: now - lastTime })
     lastTime = now
     await new Promise(resolve => setTimeout(resolve, 0))
+  }
+}
+
+const check = (plain: string, filter: string) => {
+  const m = filter.length
+  const n = plain.length
+
+  const dp = Array(m + 1).fill(false).map(() => Array(n + 1).fill(false))
+  dp[0][0] = true
+
+  for (let i = 1; i <= m; i++) {
+    if (filter[i - 1] === '*') {
+      dp[i][0] = dp[i - 1][0]
+    }
+  }
+
+  for (let i = 1; i <= m; i++) {
+    for (let j = 1; j <= n; j++) {
+      if (filter[i - 1] === plain[j - 1] || filter[i - 1] === '?') {
+        dp[i][j] = dp[i - 1][j - 1]
+      } else if (filter[i - 1] === '*') {
+        dp[i][j] = dp[i - 1][j] || dp[i][j - 1]
+      }
+    }
+  }
+
+  // Ensure that remaining characters in plain string can be ignored after a match
+  for (let j = 0; j <= n; j++) {
+    if (dp[m][j]) {
+      return true
+    }
+  }
+
+  return false
+}
+
+function batchGenerate() {
+  const sessionIDs = new Array<string>(4000)
+  const seeds = new Array<Uint8Array>(4000)
+  const seedForKeypair = new Uint8Array(32)
+
+  for (let i = 0; i < 4000; i++) {
+    const seed = sodium.randombytes_buf(16)
+    seedForKeypair.set(seed)
+
+    const ed25519KeyPair = sodium.crypto_sign_seed_keypair(seedForKeypair)
+    const x25519PublicKey = sodium.crypto_sign_ed25519_pk_to_curve25519(ed25519KeyPair.publicKey)
+
+    sessionIDs[i] = hex(x25519PublicKey)
+    seeds[i] = seed
+  }
+
+  return {
+    sessionIDs, 
+    seeds 
   }
 }

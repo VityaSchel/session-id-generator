@@ -16,7 +16,7 @@ export function Results({ generating, results, onClear }: {
               <div className='flex items-end gap-2'>
                 <div className='flex flex-col flex-1 max-w-full min-w-0'>
                   <span className='text-sm'>Filter:</span>
-                  <span className='font-mono text-ellipsis text-xs whitespace-nowrap overflow-hidden block max-w-full'>{result.filter}</span>
+                  <span className='font-mono text-ellipsis text-xs whitespace-nowrap overflow-hidden block max-w-full'>05{result.filter}</span>
                 </div>
                 <button className='shrink-0' onClick={() => copy(result.mnemonic)}>Copy mnemonic</button>
               </div>

@@ -37,7 +37,7 @@ export function Settings({ threads, setThreads, onMetricsUpdate, onReset, onResu
     }
     worker.addEventListener('message', onMessage)
     worker.addEventListener('error', (event) => console.error(event.message))
-    worker.postMessage('05' + filter)
+    worker.postMessage(filter)
     return worker
   }
 
@@ -66,7 +66,7 @@ export function Settings({ threads, setThreads, onMetricsUpdate, onReset, onResu
         <div className='flex items-center min-w-0 flex-1 font-mono'>
           <input
             value={'05' + filter}
-            onChange={e => setFilter(e.target.value.substring(2).replaceAll(/[^0-9a-fA-F]/g, '').toLowerCase())}
+            onChange={e => setFilter(e.target.value.substring(2).replaceAll(/[^0-9a-fA-F?*]/g, '').toLowerCase())}
             disabled={generating}
             className='font-mono text-xl rounded-md border-solid border-[1px] px-4 py-2 flex-1 w-full overflow-hidden'
           ></input>
@@ -80,9 +80,12 @@ export function Settings({ threads, setThreads, onMetricsUpdate, onReset, onResu
         </div>
         <button onClick={handleSwitch} className='rounded-md font-[inherit] border-solid px-4'>Start/stop</button>
       </div>
+      <span className='text-sm text-neutral-400'>
+        <span className='font-mono bg-neutral-700 px-1'>?</span> means any character, <span className='font-mono bg-neutral-700 px-1'>*</span> means any sequence of characters
+      </span>
       <div className='flex justify-between flex-col 320:flex-row'>
         <div className='flex gap-[3px]'>
-          <span className='tabular-nums w-20'>{threads} thread{threads > 1 && 's'}</span>
+          <span className='tabular-nums w-[84px]'>{threads} worker{threads > 1 && 's'}</span>
           <input
             type='range'
             min={1}
