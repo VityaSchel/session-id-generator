@@ -84,6 +84,7 @@ CLI:
 | CPU or chip           | Ids/sec using max. threads |
 | --------------------- | -------------------------- |
 | MacBook Pro M1 (2021) | 70 000                     |
+| Intel Core i3         | 5 350                      |
 |                       |                            |
 
 As you can see, **CLI is slightly faster**, but it's not significant when you bruteforce 4-5 characters, since you will spend more time installing CLI than save on this performance increase.
