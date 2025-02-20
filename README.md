@@ -31,6 +31,8 @@ All contributions, especially optimizations to src/worker.ts are welcome.
 
 ## How long would it take?
 
+This tool runs on CPU. There is no way to select specific CPU or GPU
+
 I recommend inputting 4 to 5 characters if you have a decent PC. 
 
 You can configure how many workers to spawn (from 1 to `Math.ceil(navigator.hardwareConcurrency / 3)`) and that directly influences how many IDs per second your PC will bruteforce. But most likely your PC will limit threads to about 60%-80% of maximum allowed threads to spawn. Basically, setting 10 workers will likely get you same results as settings 7 workers.
@@ -70,20 +72,22 @@ Here are some benchmarks:
 
 Website:
 
-| CPU or chip              | Ids/sec using max. threads |
-| ------------------------ | -------------------------- |
-| MacBook Pro M1 (2021)    | 50 000                     |
-| 7800x3d                  | 54 000                     |
-| Samsung S23 Ultra        | 15 000                     |
-| iPhone 15 Pro Max        | 22 000                     |
-| MacBook Air Intel (2020) | 6 600                      |
-|                          |                            |
+| CPU or chip               | Ids/sec using max. threads |
+| ------------------------- | -------------------------- |
+| MacBook Pro M4 Pro (2024) | 102 000                    |
+| MacBook Pro M1 Pro (2021) | 66 000                     |
+| 7800x3d                   | 54 000                     |
+| iPhone 15 Pro Max         | 22 000                     |
+| Samsung S23 Ultra         | 15 000                     |
+| MacBook Air Intel (2020)  | 6 600                      |
+|                           |                            |
 
 CLI:
 
 | CPU or chip           | Ids/sec using max. threads |
 | --------------------- | -------------------------- |
-| MacBook Pro M1 (2021) | 70 000                     |
+| MacBook Pro M4 (2024) | 140 000                    |
+| MacBook Pro M1 (2021) | 72 000                     |
 | Intel Core i3         | 5 350                      |
 |                       |                            |
 

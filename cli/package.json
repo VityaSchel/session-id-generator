@@ -9,13 +9,12 @@
   },
   "scripts": {
     "start": "bun src/index.ts",
-    "compile": "rm -rf releases && bun run compile:darwin:arm && bun run compile:darwin:x64 && bun run compile:linux:arm && bun run compile:linux:x64 && bun run compile:windows:arm && bun run compile:windows:x64",
-    "compile:darwin:arm": "bun build src/index.ts --compile --outfile=releases/darwin_arm/sidgen --minify && zip -j releases/darwin_arm.zip releases/darwin_arm/sidgen",
-    "compile:darwin:x64": "bun build src/index.ts --compile --outfile=releases/darwin_x64/sidgen --minify && zip -j releases/darwin_x64.zip releases/darwin_x64/sidgen",
-    "compile:linux:arm": "bun build src/index.ts --compile --outfile=releases/linux_arm/sidgen --minify && zip -j releases/linux_arm.zip releases/linux_arm/sidgen",
-    "compile:linux:x64": "bun build src/index.ts --compile --outfile=releases/linux_x64/sidgen --minify && zip -j releases/linux_x64.zip releases/linux_x64/sidgen",
-    "compile:windows:arm": "bun build src/index.ts --compile --outfile=releases/windows_arm/sidgen --minify && zip -j releases/windows_arm.zip releases/windows_arm/sidgen",
-    "compile:windows:x64": "bun build src/index.ts --compile --outfile=releases/windows_x64/sidgen --minify && zip -j releases/windows_x64.zip releases/windows_x64/sidgen"
+    "compile": "rm -rf releases && bun run compile:darwin:arm && bun run compile:darwin:x64 && bun run compile:linux:arm && bun run compile:linux:x64 && bun run compile:windows",
+    "compile:darwin:arm": "bun build --compile --bytecode ./src/index.ts ./src/worker.ts --outfile releases/darwin_arm/sidgen --target=bun-darwin-arm64 --minify && zip -j releases/macos_arm_silicon.zip releases/darwin_arm/sidgen",
+    "compile:darwin:x64": "bun build --compile --bytecode ./src/index.ts ./src/worker.ts --outfile releases/darwin_x64/sidgen --target=bun-darwin-x64 --minify && zip -j releases/macos_x64_intel.zip releases/darwin_x64/sidgen",
+    "compile:linux:arm": "bun build --compile --bytecode ./src/index.ts ./src/worker.ts --outfile releases/linux_arm/sidgen --target=bun-linux-arm64 --minify && zip -j releases/linux_arm.zip releases/linux_arm/sidgen",
+    "compile:linux:x64": "bun build --compile --bytecode ./src/index.ts ./src/worker.ts --outfile releases/linux_x64/sidgen --target=bun-linux-x64 --minify && zip -j releases/linux_x64.zip releases/linux_x64/sidgen",
+    "compile:windows": "bun build --compile --bytecode ./src/index.ts ./src/worker.ts --outfile releases/windows_x64/sidgen --target=bun-windows-x64 --minify && zip -j releases/windows_x64.zip releases/windows_x64/sidgen.exe"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
